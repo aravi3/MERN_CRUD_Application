@@ -28,6 +28,10 @@ MongoClient.connect('mongodb://ar2au:Sairam#101@ds057224.mlab.com:57224/funny-qu
 console.log("May Node be with you");
 
 app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/root.html');
+});
+
+app.get('/quotes', (req, res) => {
   // res.send('hello world');
   // res.sendFile(__dirname + '/index.html');
 
@@ -37,8 +41,10 @@ app.get('/', (req, res) => {
       return;
     }
 
-    res.render('index.ejs', {quotes: result});
+    res.send(result);
   });
+
+  // res.render('root.ejs');
 });
 
 app.post('/quotes', (req, res) => {
@@ -51,13 +57,24 @@ app.post('/quotes', (req, res) => {
       return;
     }
 
-    console.log('saved to database');
-    res.redirect('/');
+    // console.log(result);
+    console.log(result.ops);
+
+    res.send(result.ops);
+
+    // res.redirect('/');
   });
 });
 
 app.patch('/quotes', (req, res) => {
-  db.collection('quotes').findOneAndUpdate({name: 'Yoda'},
+  let newEntry = {
+    name: req.body.name,
+    quote: req.body.quote
+  };
+  db.collection('quotes').findOneAndUpdate(
+  {
+    name: req.body.name
+  },
   {
     $set: {
       name: req.body.name,
@@ -65,15 +82,15 @@ app.patch('/quotes', (req, res) => {
     }
   },
   {
+    new:  true,
     sort: {_id: -1},
-    upsert: true
   },
   (err, result) => {
     if (err) {
       return res.send(err);
     }
-
-    res.send(result);
+    newEntry['_id'] = result.value._id;
+    res.send(newEntry);
   });
 });
 
@@ -83,7 +100,7 @@ app.delete('/quotes', (req, res) => {
       if (err) {
         return res.send(500, err);
       }
-
+      console.log(result);
       // res.send({message: 'A darth vadar quote got deleted'});
       res.send(result.value);
   });

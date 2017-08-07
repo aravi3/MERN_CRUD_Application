@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return res.json();
       }
     }).then(data => {
-      debugger;
       console.log(data);
       window.location.reload();
     });
