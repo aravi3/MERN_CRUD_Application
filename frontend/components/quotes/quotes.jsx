@@ -1,5 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+
+import 'brace/mode/javascript';
+import 'brace/theme/monokai';
 
 class Quotes extends React.Component {
   constructor(props) {
@@ -7,7 +12,8 @@ class Quotes extends React.Component {
 
     this.state = {
       name: "",
-      quote: ""
+      quote: "",
+      code: ""
     };
 
     this.handleCreate = this.handleCreate.bind(this);
@@ -15,6 +21,7 @@ class Quotes extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.setName = this.setName.bind(this);
     this.setQuote = this.setQuote.bind(this);
+    this.setCode = this.setCode.bind(this);
   }
 
   setName(e) {
@@ -27,6 +34,11 @@ class Quotes extends React.Component {
     e.preventDefault();
     let quote = e.target.value ? e.target.value : "";
     this.setState({ quote });
+  }
+
+  setCode(newVal) {
+    let code = newVal;
+    this.setState({ code });
   }
 
   handleCreate(e) {
@@ -92,6 +104,17 @@ class Quotes extends React.Component {
           <button onClick={this.handleUpdate}>Update</button>
           <button onClick={this.handleDelete}>Delete</button>
         </form>
+
+        <br /><br />
+          <AceEditor
+            mode="javascript"
+            theme="monokai"
+            highlightActiveLine={true}
+            onChange={this.setCode}
+            name="UNIQUE_ID_OF_DIV"
+            value={this.state.code}
+            editorProps={{$blockScrolling: true}}
+          />
       </div>
     );
   }
